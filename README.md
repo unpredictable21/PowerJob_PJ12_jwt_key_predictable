@@ -55,6 +55,11 @@ secret = BASE_SECURITY + md5(jdbc_url)             # 101-byte key
 - The PWJB `encryptedToken` is recomputable offline with the default password (`powerjob_admin`, finding PJ-02) → **full admin takeover**.
 - If the admin changed the password, forging a web token is blocked by the `encryptedToken` mismatch, but the **OpenAPI App Token** path (claims `appId/password/encryptType`, `OpenApiSecurityServiceImpl:87-105`) can still be forged independently to bypass OpenAPI authentication.
 
+**Even if the default password is changed, the vulnerability persists through other attack vectors:**
+- An attacker who obtains **any valid user's `encryptedToken`** via other means (e.g., SQL injection, database backup exposure, log leakage, or information disclosure from other endpoints) can combine that token with the predictable signing key to forge a JWT for that specific user.
+- This bypasses the `encryptedToken` mismatch issue entirely, because the forged token now contains a legitimate `encryptedToken` derived from the actual database record.
+- As a result, the attacker does not need to know the user's plaintext password at all, and the forged JWT remains valid even after the user changes their password (until the token expires).
+
 **PoC:** `powerjob_jwt_forge.py 192.168.49.128:7700`
 
 <img width="883" height="330" alt="image" src="https://github.com/user-attachments/assets/edce9f4e-0ff2-4410-8a45-0c8b51fb00f3" />
