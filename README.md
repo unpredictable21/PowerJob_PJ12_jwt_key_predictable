@@ -60,7 +60,7 @@ secret = BASE_SECURITY + md5(jdbc_url)             # 101-byte key
 - This bypasses the `encryptedToken` mismatch issue entirely, because the forged token now contains a legitimate `encryptedToken` derived from the actual database record.
 - As a result, the attacker does not need to know the user's plaintext password at all, and the forged JWT remains valid even after the user changes their password (until the token expires).
 
-**PoC:** `powerjob_jwt_forge.py 192.168.49.128:7700`
+**PoC:** `powerjob_jwt_key.py 192.168.49.128:7700`
 
 <img width="883" height="330" alt="image" src="https://github.com/user-attachments/assets/edce9f4e-0ff2-4410-8a45-0c8b51fb00f3" />
 
